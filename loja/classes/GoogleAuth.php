@@ -146,6 +146,7 @@ class GoogleAuth {
      * Inicia sessão do usuário
      */
     public function login($userId) {
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $userId;
         $_SESSION['login_time'] = time();
         

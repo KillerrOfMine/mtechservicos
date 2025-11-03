@@ -23,9 +23,4 @@
     <a href="login.php" class="menu-item">🚪 Sair</a>
 </div>
 
-<script>
-function toggleMenu() {
-    document.getElementById('menuLateral').classList.toggle('ativo');
-    document.getElementById('menuOverlay').classList.toggle('ativo');
-}
-</script>
+<script src="/MTechEscola/professor/assets/header_mobile.js?v=<?php echo time(); ?>"></script>
