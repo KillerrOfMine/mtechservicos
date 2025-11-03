@@ -16,7 +16,8 @@ class GitGUI(tk.Tk):
         self.configure(bg='#f4f6fa')
         self.create_widgets()
         self.repo = None
-        self.load_credentials()
+        if hasattr(self, 'user_entry') and hasattr(self, 'token_entry'):
+            self.load_credentials()
 
     def create_widgets(self):
         # Frame central
@@ -26,23 +27,37 @@ class GitGUI(tk.Tk):
         title = tk.Label(frame, text='MTechServiços - GitHub Commit', font=('Segoe UI', 22, 'bold'), bg='#f4f6fa', fg='#2d3e50')
         title.grid(row=0, column=0, columnspan=2, pady=(10, 30))
 
-        tk.Label(frame, text='Usuário do GitHub:', font=('Segoe UI', 14), bg='#f4f6fa').grid(row=1, column=0, sticky='e', padx=10, pady=10)
-        self.user_entry = tk.Entry(frame, width=35, font=('Segoe UI', 13))
-        self.user_entry.grid(row=1, column=1, padx=10, pady=10)
+        # Detecta se o remote é SSH
+        try:
+            repo = Repo(REPO_PATH)
+            origin_url = repo.remotes.origin.url
+            is_ssh = origin_url.startswith('git@')
+        except Exception:
+            is_ssh = False
 
-        tk.Label(frame, text='Token/Senha do GitHub:', font=('Segoe UI', 14), bg='#f4f6fa').grid(row=2, column=0, sticky='e', padx=10, pady=10)
-        self.token_entry = tk.Entry(frame, show='*', width=35, font=('Segoe UI', 13))
-        self.token_entry.grid(row=2, column=1, padx=10, pady=10)
+        self.is_ssh = is_ssh
 
-        tk.Button(frame, text='Salvar Credenciais', font=('Segoe UI', 12), bg='#4caf50', fg='white', command=self.save_credentials, width=20, height=1).grid(row=3, column=0, columnspan=2, pady=(10, 20))
+        if not is_ssh:
+            tk.Label(frame, text='Usuário do GitHub:', font=('Segoe UI', 14), bg='#f4f6fa').grid(row=1, column=0, sticky='e', padx=10, pady=10)
+            self.user_entry = tk.Entry(frame, width=35, font=('Segoe UI', 13))
+            self.user_entry.grid(row=1, column=1, padx=10, pady=10)
 
-        tk.Button(frame, text='Selecionar Arquivo para Upload', font=('Segoe UI', 12), bg='#2196f3', fg='white', command=self.select_file, width=25, height=1).grid(row=4, column=0, columnspan=2, pady=10)
+            tk.Label(frame, text='Token/Senha do GitHub:', font=('Segoe UI', 14), bg='#f4f6fa').grid(row=2, column=0, sticky='e', padx=10, pady=10)
+            self.token_entry = tk.Entry(frame, show='*', width=35, font=('Segoe UI', 13))
+            self.token_entry.grid(row=2, column=1, padx=10, pady=10)
 
-        tk.Label(frame, text='Mensagem do Commit:', font=('Segoe UI', 14), bg='#f4f6fa').grid(row=5, column=0, sticky='e', padx=10, pady=10)
+            tk.Button(frame, text='Salvar Credenciais', font=('Segoe UI', 12), bg='#4caf50', fg='white', command=self.save_credentials, width=20, height=1).grid(row=3, column=0, columnspan=2, pady=(10, 20))
+            row_offset = 4
+        else:
+            row_offset = 1
+
+        tk.Button(frame, text='Selecionar Arquivo para Upload', font=('Segoe UI', 12), bg='#2196f3', fg='white', command=self.select_file, width=25, height=1).grid(row=row_offset, column=0, columnspan=2, pady=10)
+
+        tk.Label(frame, text='Mensagem do Commit:', font=('Segoe UI', 14), bg='#f4f6fa').grid(row=row_offset+1, column=0, sticky='e', padx=10, pady=10)
         self.commit_entry = tk.Entry(frame, width=35, font=('Segoe UI', 13))
-        self.commit_entry.grid(row=5, column=1, padx=10, pady=10)
+        self.commit_entry.grid(row=row_offset+1, column=1, padx=10, pady=10)
 
-        tk.Button(frame, text='Commit e Push', font=('Segoe UI', 13, 'bold'), bg='#ff9800', fg='white', command=self.commit_and_push, width=20, height=2).grid(row=6, column=0, columnspan=2, pady=(30, 10))
+        tk.Button(frame, text='Commit e Push', font=('Segoe UI', 13, 'bold'), bg='#ff9800', fg='white', command=self.commit_and_push, width=20, height=2).grid(row=row_offset+2, column=0, columnspan=2, pady=(30, 10))
 
     def save_credentials(self):
         user = self.user_entry.get()
@@ -83,13 +98,13 @@ class GitGUI(tk.Tk):
                 self.repo = Repo(REPO_PATH)
             self.repo.git.add(A=True)
             self.repo.index.commit(commit_msg)
-            # Configurar remote com credenciais
-            user = self.user_entry.get()
-            token = self.token_entry.get()
             origin_url = self.repo.remotes.origin.url
-            if 'github.com' in origin_url:
-                url_with_auth = origin_url.replace('https://', f'https://{user}:{token}@')
-                self.repo.remotes.origin.set_url(url_with_auth)
+            if not self.is_ssh:
+                user = self.user_entry.get()
+                token = self.token_entry.get()
+                if 'github.com' in origin_url:
+                    url_with_auth = origin_url.replace('https://', f'https://{user}:{token}@')
+                    self.repo.remotes.origin.set_url(url_with_auth)
             self.repo.remotes.origin.push()
             messagebox.showinfo('Sucesso', 'Commit e push realizados com sucesso!')
         except GitCommandError as e:
