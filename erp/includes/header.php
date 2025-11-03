@@ -1,4 +1,5 @@
 <?php
+session_start();
 if (session_status() !== PHP_SESSION_ACTIVE && !headers_sent()) {
     session_start();
 }
@@ -427,15 +428,11 @@ body.dark-theme .logo-area .logo-escura { display: none; }
         <!-- Logo -->
         <div class="logo-area">
             <?php
-            $logo_clara = !empty($config['logo_clara']) ? $config['logo_clara'] : '';
-            $logo_escura = !empty($config['logo_escura']) ? $config['logo_escura'] : '';
-            if ($logo_clara && $logo_escura) {
-                echo '<img src="' . htmlspecialchars($logo_escura) . '" alt="Logo Escura" class="logo-escura" style="height:40px;max-height:40px;vertical-align:middle;">';
-                echo '<img src="' . htmlspecialchars($logo_clara) . '" alt="Logo Clara" class="logo-clara" style="height:40px;max-height:40px;vertical-align:middle;">';
-            } elseif ($logo_clara) {
-                echo '<img src="' . htmlspecialchars($logo_clara) . '" alt="Logo Clara" class="logo-clara" style="height:40px;max-height:40px;vertical-align:middle;">';
-            } elseif ($logo_escura) {
-                echo '<img src="' . htmlspecialchars($logo_escura) . '" alt="Logo Escura" class="logo-escura" style="height:40px;max-height:40px;vertical-align:middle;">';
+            $logo_clara = !empty($config['logo_clara']) ? htmlspecialchars($config['logo_clara']) : '';
+            $logo_escura = !empty($config['logo_escura']) ? htmlspecialchars($config['logo_escura']) : '';
+            if ($logo_clara || $logo_escura) {
+                echo '<img src="' . ($logo_escura ?: $logo_clara) . '" alt="Logo Escura" class="logo-escura" style="height:40px;max-height:40px;vertical-align:middle;">';
+                echo '<img src="' . ($logo_clara ?: $logo_escura) . '" alt="Logo Clara" class="logo-clara" style="height:40px;max-height:40px;vertical-align:middle;">';
             } else {
                 echo '<span style="font-weight:700;font-size:1.3em;letter-spacing:1px;">ERP</span>';
             }
@@ -489,7 +486,7 @@ body.dark-theme .logo-area .logo-escura { display: none; }
                 'dados_empresa.php'=> ['label' => 'Dados da Empresa', 'url' => '/erp/dados_empresa.php'],
                 'usuarios.php'      => ['label' => 'Usuários', 'url' => '/erp/usuarios.php'],
                 'importacao.php'    => ['label' => 'Importação de Dados', 'url' => '/erp/importacao.php'],
-                'permissoes_usuario.php' => ['label' => 'Permissionamento', 'url' => 'https://mtechservicos.com/erp/permissoes_usuario.php'],
+                'permissoes_usuario.php' => ['label' => 'Permissionamento', 'url' => '/erp/permissoes_usuario.php'],
                 'logs_permissoes.php' => ['label' => 'Logs de Permissionamento', 'url' => '/erp/logs_permissoes.php'],
             ]
         ];

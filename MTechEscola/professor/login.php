@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$login]);
     $prof = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($prof && password_verify($senha, $prof['senha'])) {
+        session_regenerate_id(true);
         $_SESSION['professor_id'] = $prof['id'];
         $_SESSION['professor_nome'] = $prof['nome'];
         header('Location: home.php');
