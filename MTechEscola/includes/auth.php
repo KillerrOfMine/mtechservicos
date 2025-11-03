@@ -8,7 +8,7 @@ $is_admin = isset($_SESSION['usuario_id']);
 $is_professor = isset($_SESSION['professor_id']);
 
 if (!$is_admin && !$is_professor) {
-    header('Location: ' . ($is_professor ? 'professor/login.php' : 'login.php'));
+    header('Location: login.php');
     exit;
 }
 

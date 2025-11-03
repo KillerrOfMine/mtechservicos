@@ -10,6 +10,8 @@
  * - Histórico de transações
  */
 
+require_once __DIR__ . '/../config.php';
+
 class AsaasAPI {
     private $apiKey;
     private $sandbox;
@@ -18,11 +20,10 @@ class AsaasAPI {
     /**
      * Construtor
      * 
-     * @param string $apiKey Token de API do Asaas
      * @param bool $sandbox Usar ambiente de testes
      */
-    public function __construct($apiKey, $sandbox = false) {
-        $this->apiKey = $apiKey;
+    public function __construct($sandbox = false) {
+        $this->apiKey = ASAAS_API_KEY;
         $this->sandbox = $sandbox;
         $this->baseUrl = $sandbox 
             ? 'https://sandbox.asaas.com/api/v3'

@@ -1,0 +1,12 @@
+#modalContato {
+    display: none;
+}
+#modalContato.show {
+    display: block;
+}
+.modal-overlay {
+    display: none;
+}
+.modal-overlay.show {
+    display: block;
+}

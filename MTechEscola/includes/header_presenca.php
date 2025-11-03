@@ -32,9 +32,4 @@
     <?php endif; ?>
 </div>
 
-<script>
-function toggleMenu() {
-    document.getElementById('menuLateral').classList.toggle('ativo');
-    document.getElementById('menuOverlay').classList.toggle('ativo');
-}
-</script>
+<script src="/MTechEscola/assets/header_presenca.js?v=<?php echo time(); ?>"></script>

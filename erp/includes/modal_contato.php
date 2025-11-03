@@ -93,17 +93,4 @@
     </div>
 </div>
 
-<style>
-#modalContato {
-    display: none;
-}
-#modalContato.show {
-    display: block;
-}
-.modal-overlay {
-    display: none;
-}
-.modal-overlay.show {
-    display: block;
-}
-</style>
+<link rel="stylesheet" href="/erp/assets/modal_contato.css?v=<?php echo time(); ?>">
